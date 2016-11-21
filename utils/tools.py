@@ -21,15 +21,15 @@ def getHtml(url, code = 'utf-8'):
     return html
 
 def getUrls(html):
-    urls = re.compile('<a.*\"(https?.+?)\"').findall(str(html))
+    urls = re.compile('<a.*?href="(https?.*?)"').findall(str(html))
     return list(set(urls))
 
-def fitUrl(urls, identi):
-    usus = []
+def fitUrl(urls, key):
+    fitUrls = []
     for link in urls:
-        if identi in link:
-            usus.append(link)
-    return list(set(usus))
+        if key in link:
+            fitUrls.append(link)
+    return list(set(fitUrls))
 
 def getInfo(html,regexs, allowRepeat = False):
     regexs = isinstance(regexs, str) and [regexs] or regexs
@@ -41,6 +41,56 @@ def getInfo(html,regexs, allowRepeat = False):
             break
 
     return allowRepeat and infos or list(set(infos))
+
+##################################################
+"""
+    匹配相关函数
+"""
+# 匹配域名
+def filterDomain(urls, domain):
+    '''
+    @summary:  通过域名过滤不是matchStr所在的URL
+    ---------
+    @param urls: URL 列表
+    @param domain: 所需域名
+    ---------
+    @result: 返回一个过滤后新的列表
+    '''
+    log.debug("解析域名....")
+    urls = isinstance(urls, str) and [urls] or urls
+    newUrls = []
+    for url in urls:
+        try:
+            if get_tld(url) == domain:
+                newUrls.append(url)
+        except Exception as e:
+            log.debug("Unknow")
+
+    return newUrls
+
+# 规则匹配
+def filterRule(urls, rules):
+    '''
+    @summary: 通过ruleList过滤不符合规则的URL
+    ---------
+    @param urls: URL 列表
+    @param rules: 需要过滤的关键字字符串或列表
+    ---------
+    @result: 返回一个过滤后新的列表
+    '''
+    log.debug("过滤匹配...")
+    urls = isinstance(urls, str) and [urls] or urls
+    rules = isinstance(rules, str) and [rules] or rules
+
+    newUrls = []
+    for url in urls:
+        for rule in rules:
+            if url.find(rule) == -1:
+                newUrls.append(url)
+                break
+
+    return newUrls
+##################################################
 
 ##################################################
 def getJson(jsonStr):
