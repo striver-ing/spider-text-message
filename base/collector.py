@@ -25,6 +25,7 @@ class Collector(threading.Thread, Singleton):
     _db = tools.getConnectedDB()
     _threadStop = False
     _urls = []
+    _nullTimes = 0
     _interval = int(tools.getConfValue("collector", "sleep_time"))
 
     #初始时将正在做的任务至为未做
@@ -42,7 +43,7 @@ class Collector(threading.Thread, Singleton):
             time.sleep(Collector._interval)
 
     def stop(self):
-        Collector._threadStop = False
+        Collector._threadStop = True
 
     def __inputData(self):
         if len(Collector._urls) > int(tools.getConfValue("collector", "max_size")):
@@ -66,7 +67,23 @@ class Collector(threading.Thread, Singleton):
         for url in urlsList:
             Collector._db.urls.update(url, {'$set':{'status':Constance.DOING}})
 
+        if self.isAllHaveDone():
+            self.stop()
+
         mylock.release()
+
+    def isFinished(self):
+        return Collector._threadStop
+
+    def isAllHaveDone(self):
+        allowedNullTimes = int(tools.getConfValue("collector", 'allowed_null_times'))
+        if Collector._urls == []:
+            Collector._nullTimes += 1
+            if Collector._nullTimes >= allowedNullTimes:
+                return True
+        else:
+            Collector._nullTimes = 0
+            return False
 
 
     def getUrls(self, count):

@@ -8,6 +8,7 @@ import utils.tools as tools
 import base.constance as Constance
 from html_parser.parsers import *
 from base.collector import Collector
+from utils.log import log
 
 db = tools.getConnectedDB()
 
@@ -22,8 +23,14 @@ class  PaserControl(threading.Thread):
         while True:
             urls = self._collector.getUrls(self._urlCount)
             print("取到的url大小 %d"%len(urls))
+            # 判断是否结束
+            if self._collector.isFinished():
+                log.debug("-------------- 结束 --------------")
+                break
+
             for url in urls:
                 self.parseUrl(url)
+
 
             time.sleep(self._interval)
 
