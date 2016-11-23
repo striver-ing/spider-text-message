@@ -24,9 +24,9 @@ def parseUrl(urlInfo):
 
     # 过滤掉外链接 添加到数据库
     fitUrl = tools.fitUrl(urls, "feng.com")
-    # for url in fitUrl:
+    for url in fitUrl:
         # log.debug('url = ' + url)
-        # basePaser.addUrl(url, websiteId, depth + 1)
+        basePaser.addUrl(url, websiteId, depth + 1)
 
     # 取当前页的文章信息
     # 标题
