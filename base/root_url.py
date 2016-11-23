@@ -26,9 +26,9 @@ class AddRootUrl(threading.Thread):
             domain = addUrlFunc[1]
 
             if website == 'all':
-                addWebUrl
+                addWebUrl()
             elif website == domain:
-                addWebUrl
+                addWebUrl()
 
     def addUrl(self, url, websiteId, description = '', depth = 0, status = Constance.TODO):
         for i in db.urls.find({'url':url}):
@@ -39,10 +39,16 @@ class AddRootUrl(threading.Thread):
 
     # 注册添加url的方法
     def registUrlFunc(self):
-       AddRootUrl._addUrlFuncs.append([self.addIFengUrl(), Constance.IFENG])
+       AddRootUrl._addUrlFuncs.append([self.addIFengUrl, Constance.IFENG])
+       AddRootUrl._addUrlFuncs.append([self.addSoHuUrl, Constance.SOHU])
 
     # 添加凤凰url
     def addIFengUrl(self):
         baseUrl = "http://www.ifeng.com/"
         websiteId = tools.getWebsiteId(Constance.IFENG)
+        self.addUrl(baseUrl, websiteId)
+
+    def addSoHuUrl(self):
+        baseUrl = 'http://www.sohu.com/'
+        websiteId = tools.getWebsiteId(Constance.SOHU)
         self.addUrl(baseUrl, websiteId)

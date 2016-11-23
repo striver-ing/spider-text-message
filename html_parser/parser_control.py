@@ -40,3 +40,5 @@ class  PaserControl(threading.Thread):
         domain = list(db.website.find({'_id':website_id}))[0]['domain']
         if domain == Constance.IFENG:
             ifeng.parseUrl(urlInfo)
+        if domain == Constance.SOHU:
+            sohu.parseUrl(urlInfo)

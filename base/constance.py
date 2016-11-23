@@ -8,3 +8,4 @@ EXECPTION      = 3
 
 # 网站
 IFENG = "ifeng.com"  #凤凰
+SOHU  = "sohu.com"
