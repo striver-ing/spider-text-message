@@ -1,13 +1,16 @@
 # encoding=utf8
-from urllib import request
+
+import sys
+sys.path.append("..")
+
 import re
 import pymongo
 import json
 import configparser #读配置文件的
 from urllib.parse import quote
-import sys
-sys.path.append("..")
 from utils.log import log
+from tld import get_tld
+from urllib import request
 
 def getHtml(url, code = 'utf-8'):
     html = None
@@ -49,7 +52,7 @@ def getInfo(html,regexs, allowRepeat = False):
 # 匹配域名
 def filterDomain(urls, domain):
     '''
-    @summary:  通过域名过滤不是matchStr所在的URL
+    @summary:  通过域名过滤不是domain所在的URL
     ---------
     @param urls: URL 列表
     @param domain: 所需域名
@@ -58,15 +61,15 @@ def filterDomain(urls, domain):
     '''
     log.debug("解析域名....")
     urls = isinstance(urls, str) and [urls] or urls
-    newUrls = []
-    for url in urls:
-        try:
-            if get_tld(url) == domain:
-                newUrls.append(url)
-        except Exception as e:
-            log.debug("Unknow")
 
-    return newUrls
+    def _Rule(url):
+        try:
+            return get_tld(url) == domain
+        except Exception as e:
+            log.debug("******** Invalid URL %s ********"%url)
+            return False
+
+    return filter(_Rule, urls)
 
 # 规则匹配
 def filterRule(urls, rules):
@@ -82,15 +85,29 @@ def filterRule(urls, rules):
     urls = isinstance(urls, str) and [urls] or urls
     rules = isinstance(rules, str) and [rules] or rules
 
-    newUrls = []
-    for url in urls:
+    def _Rule(url):
         for rule in rules:
-            if url.find(rule) == -1:
-                newUrls.append(url)
-                break
+            if url.find(rule) != -1:
+                return False
+        return True
 
-    return newUrls
-##################################################
+    return filter(_Rule, urls)
+
+def filterHttp(urls, rule  = 'http'):
+    '''
+    @summary: 过滤不是http开头的url
+    ---------
+    @param urls: url list
+    @param rule: must be str  only one
+    ---------
+    @result: filtered list
+    '''
+    urls = isinstance(urls, str) and [urls] or urls
+    def _Rule(url):
+        if re.match(rule, url):
+            return True
+        return False
+    return filter(_Rule, urls)
 
 ##################################################
 def getJson(jsonStr):

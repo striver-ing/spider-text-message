@@ -41,6 +41,8 @@ class AddRootUrl(threading.Thread):
     def registUrlFunc(self):
        AddRootUrl._addUrlFuncs.append([self.addIFengUrl, Constance.IFENG])
        AddRootUrl._addUrlFuncs.append([self.addSoHuUrl, Constance.SOHU])
+       AddRootUrl._addUrlFuncs.append([self.addTencentUrl, Constance.TENCENT])
+       AddRootUrl._addUrlFuncs.append([self.addSinaUrl, Constance.SINA])
 
     # 添加凤凰url
     def addIFengUrl(self):
@@ -49,6 +51,18 @@ class AddRootUrl(threading.Thread):
         self.addUrl(baseUrl, websiteId)
 
     def addSoHuUrl(self):
-        baseUrl = 'http://www.sohu.com/'
+        baseUrl = "http://www.sohu.com/"
         websiteId = tools.getWebsiteId(Constance.SOHU)
+        self.addUrl(baseUrl, websiteId)
+
+    # 添加腾讯url
+    def addTencentUrl(self):
+        baseUrl = "http://www.qq.com"
+        websiteId = tools.getWebsiteId(Constance.TENCENT)
+        self.addUrl(baseUrl, websiteId)
+
+    # 添加新浪url
+    def addSinaUrl(self):
+        baseUrl = "http://www.sina.com.cn/"
+        websiteId = tools.getWebsiteId(Constance.SINA)
         self.addUrl(baseUrl, websiteId)
