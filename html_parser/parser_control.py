@@ -43,8 +43,10 @@ class  PaserControl(threading.Thread):
         elif domain == Constance.SOHU:
             sohu.parseUrl(urlInfo)
         elif domain == Constance.TENCENT:
-            tencent.parseUrl(urlInfo)
+            # tencent.parseUrl(urlInfo)
+            pass
         elif domain == Constance.SINA:
-            sina.parseUrl(urlInfo)
+            # sina.parseUrl(urlInfo)
+            pass
         elif domain == Constance.CCTV:
             cctv.parseUrl(urlInfo)

@@ -3,7 +3,9 @@ import pymongo
 from pymongo.collection import Collection
 import urllib.parse
 import os
+import shutil
 import sys
+from tld import get_tld
 
 sys.path.append("..")
 from utils.log import log
@@ -33,19 +35,30 @@ class MongoDB():
 
 # 二级域名
 def getDomain(url):
-    proto, rest = urllib.parse.splittype(url)
-    res, rest = urllib.parse.splithost(rest)
-    rest = res.replace('www.', '')
-    return rest
+    try:
+        domain = get_tld(url)
+        domainStartPos = url.find(domain)
+        domainEndPos = domainStartPos + len(domain)
+        secondDomainStartPos = url.rfind('.', 0, domainStartPos - 1) + 1
 
-if __name__ == '__main__':
+        if secondDomainStartPos == 0:
+            secondDomainStartPos = url.find('//') + 2
+
+        secondDomain = url[secondDomainStartPos: domainEndPos]
+        secondDomain = secondDomain.replace('www.', '')
+        return secondDomain
+    except Exception as e:
+        print (e)
+        return domain
+
+def export():
     dataCount = 0
 
     mongoDB = MongoDB()
     db = mongoDB.getMongoDB()
 
-    if not os.path.exists(FILE_PATH):
-        os.removedirs(os.remove(FILE_PATH))
+    if os.path.exists(FILE_PATH):
+        shutil.rmtree(FILE_PATH)#删除
 
     flag = True
     while flag:
@@ -62,12 +75,11 @@ if __name__ == '__main__':
             if not os.path.exists(FILE_PATH + website + "\\"):
                 os.makedirs(FILE_PATH + website + "\\")
 
-
             #创建文件 追加方式写入
             file = open(fileName, 'a',  encoding='utf8')
 
             # 写文件
-            print('正在导出 %s 到 %s'%(data['title'], fileName))
+            print('正在导出 %s --> %s'%(data['title'], fileName))
             value = (data['title'], data['release_time'], data['charset'], data['author'], data['url'], data['keyword'], data['content'])
             text = \
 '''
@@ -84,12 +96,12 @@ if __name__ == '__main__':
 '''
             file.write(text%value)
             dataCount = dataCount + 1
-
+            file.close()
 
     mongoDB.close()
-    file.close()
-
     print('*'*40)
     print('已导出数据到 %s  共%d条'%(FILE_PATH, dataCount))
-    print('注：如果中文乱码，请用记事本打开，然后另存为ANSI格式')
     # pause
+
+if __name__ == '__main__':
+    export()

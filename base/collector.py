@@ -16,6 +16,8 @@ import time
 import base.constance as Constance
 import utils.tools as tools
 from utils.log import log
+import utils.export_data as exportData
+import os
 
 mylock = threading.RLock()
 
@@ -78,6 +80,7 @@ class Collector(threading.Thread, Singleton):
 
         if self.isAllHaveDone():
             self.stop()
+            exportData.export()
 
         mylock.release()
 
