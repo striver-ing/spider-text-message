@@ -3,4 +3,5 @@ __all__ = [
     "sohu",
     "tencent",
     "sina",
+    "cctv",
  ]

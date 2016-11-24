@@ -46,3 +46,5 @@ class  PaserControl(threading.Thread):
             tencent.parseUrl(urlInfo)
         elif domain == Constance.SINA:
             sina.parseUrl(urlInfo)
+        elif domain == Constance.CCTV:
+            cctv.parseUrl(urlInfo)
