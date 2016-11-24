@@ -1,15 +1,18 @@
 # enconding = utf8
 import pymongo
 from pymongo.collection import Collection
+import urllib.parse
+import os
 import sys
+
 sys.path.append("..")
 from utils.log import log
 
 MONGO_HOST = 'localhost'
 MONGO_PORT = 27017
 
-FILE    = 'D:\\ku6_todo.csv'
-WEBSITE = "酷六"
+FILE_PATH    = 'D:\\TextMessage\\'
+# WEBSITE = "酷六"
 
 class MongoDB():
     def __init__(self, db = '', host = MONGO_HOST, port = MONGO_PORT):
@@ -20,8 +23,7 @@ class MongoDB():
     def getMongoDB(self):
         try:
             self.client = pymongo.MongoClient(self.host, self.port)
-            db = self.db
-            self.db = self.client.crawl  #这需要手动填mongodb数据库名
+            self.db = self.client.spider_text_message  #这需要手动填mongodb数据库名
             return self.db
         except:
             print('connect mongodb error.')
@@ -29,20 +31,12 @@ class MongoDB():
     def close(self):
         self.client.close()
 
-# 纪录片表 `documentary`
-
-# | 字段名              | 数据类型| 长度 | 说明       | 描述 |
-# |:-------------------|:-------|:----|:----------|:----|
-# |doc_name||||片名|
-# |episode_num||||集数|
-# |abstract||||简介|
-# |play_num||||总播放量|
-# |url||||纪录片url|
-# |total_length||||总片长 (单位秒)|
-# |institutions||||播出机构|
-# |release_time||||发布时间|
-# |cyclopedia_msg||||百度百科上的信息|
-# |website_id||||网站id|
+# 二级域名
+def getDomain(url):
+    proto, rest = urllib.parse.splittype(url)
+    res, rest = urllib.parse.splithost(rest)
+    rest = res.replace('www.', '')
+    return rest
 
 if __name__ == '__main__':
     dataCount = 0
@@ -50,20 +44,45 @@ if __name__ == '__main__':
     mongoDB = MongoDB()
     db = mongoDB.getMongoDB()
 
-    website = list(db.website.find({'web_name':WEBSITE}))
-    assert len(website), '数据库中无%s信息'%WEBSITE
-    websiteId = website[0]['_id']
+    if not os.path.exists(FILE_PATH):
+        os.removedirs(os.remove(FILE_PATH))
 
-    file = open(FILE, 'w+',  encoding='utf8')
-    file.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n"%('片名', '集数', '简介', '播放量', 'url', '片长', '播出机构', '发布时间', '百科信息', '网站'))
     flag = True
     while flag:
         flag = False
-        datas = db.documentary.find({'website_id':websiteId})
+        datas = db.text_info.find({})
         for data in datas:
-            print('正在导出 %s'%data['doc_name'])
-            value = (data['doc_name'], data['episode_num'], data['abstract'], data['play_num'], data['url'], data['total_length'], data['institutions'], data['release_time'], data['cyclopedia_msg'], WEBSITE)
-            file.write('"%s","%s","%s","%s","%s","%s","%s","%s","%s","%s"\n'%value)
+            url = data['url']
+            website = list(db.website.find({'_id':data['website_id']}))[0]['web_name']
+
+            fileName = getDomain(url) + ".txt"
+            fileName = FILE_PATH + website + "\\" + fileName
+
+            # 创建文件夹
+            if not os.path.exists(FILE_PATH + website + "\\"):
+                os.makedirs(FILE_PATH + website + "\\")
+
+
+            #创建文件 追加方式写入
+            file = open(fileName, 'a',  encoding='utf8')
+
+            # 写文件
+            print('正在导出 %s 到 %s'%(data['title'], fileName))
+            value = (data['title'], data['release_time'], data['charset'], data['author'], data['url'], data['keyword'], data['content'])
+            text = \
+'''
+<text>
+<title>%s</title>
+<foundtime>%s</foundtime>
+<charset>%s</charse>
+<author>%s</author>
+<Url>%s</Url>
+<keyword>%s</keyword>
+<summary>%s</summary>
+</text>
+
+'''
+            file.write(text%value)
             dataCount = dataCount + 1
 
 
@@ -71,6 +90,6 @@ if __name__ == '__main__':
     file.close()
 
     print('*'*40)
-    print('已导出数据到 %s  共%d条'%(FILE, dataCount))
+    print('已导出数据到 %s  共%d条'%(FILE_PATH, dataCount))
     print('注：如果中文乱码，请用记事本打开，然后另存为ANSI格式')
     # pause
