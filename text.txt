@@ -1,9 +1,8 @@
-<h1>特朗普会改变美国“亚太再平衡战略”吗？</h1>
+xinhua
 
-<div class="box_pic"></div> ... <div class="box_pic"></div>
-<div class="content clear clearfix"> ...<div class="edit clearfix">
-<div class="show_text"> ... <div class="edit">
-        
-wangyi
-<h1>习近平出席APEC会议:共架合作之桥 共绘发展画卷</h1>
-<div class="post_text" ...<div class="post_btmshare">
+<h1 id="title">
+新华国际时评：中国梦走向世界的豪迈与担当
+</h1>
+
+<div id="content">(.*?)<div class="clear"></div>
+<div id="videoArea"> .. <!--文章操作-->

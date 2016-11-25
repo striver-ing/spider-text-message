@@ -27,11 +27,13 @@ def getUrls(html):
     urls = re.compile('<a.*?href="(https?.*?)"').findall(str(html))
     return list(set(urls))
 
-def fitUrl(urls, key):
+def fitUrl(urls, identis):
+    identis = isinstance(identis, str) and [identis] or identis
     fitUrls = []
     for link in urls:
-        if key in link:
-            fitUrls.append(link)
+        for identi in identis:
+            if identi in link:
+                fitUrls.append(link)
     return list(set(fitUrls))
 
 def getInfo(html,regexs, allowRepeat = False):

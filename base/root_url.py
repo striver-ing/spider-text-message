@@ -46,6 +46,7 @@ class AddRootUrl(threading.Thread):
        AddRootUrl._addUrlFuncs.append([self.addCCTVUrl, Constance.CCTV])
        AddRootUrl._addUrlFuncs.append([self.addPeopleUrl, Constance.PEOPLE])
        AddRootUrl._addUrlFuncs.append([self.addWangYiUrl, Constance.WANG_YI])
+       AddRootUrl._addUrlFuncs.append([self.addXinHuaUrl, Constance.XIN_HUA])
 
     # 添加凤凰url
     def addIFengUrl(self):
@@ -83,4 +84,9 @@ class AddRootUrl(threading.Thread):
     def addWangYiUrl(self):
         baseUrl = "http://www.163.com/"
         websiteId = tools.getWebsiteId(Constance.WANG_YI)
+        self.addUrl(baseUrl, websiteId)
+
+    def addXinHuaUrl(self):
+        baseUrl = "http://www.xinhuanet.com/"
+        websiteId = tools.getWebsiteId(Constance.XIN_HUA)
         self.addUrl(baseUrl, websiteId)

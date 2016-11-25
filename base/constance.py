@@ -14,3 +14,4 @@ SINA    = "sina.com.cn"      #新浪
 CCTV    = "cctv.com"         #央视
 PEOPLE  = "people.com.cn"    #人民
 WANG_YI = "163.com"
+XIN_HUA = "xinhuanet.com"
