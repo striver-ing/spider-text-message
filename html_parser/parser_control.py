@@ -53,3 +53,6 @@ class  PaserControl(threading.Thread):
 
         elif domain == Constance.PEOPLE:
             people.parseUrl(urlInfo)
+
+        elif domain == Constance.WANG_YI:
+            wangyi.parseUrl(urlInfo)

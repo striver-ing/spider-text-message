@@ -45,6 +45,16 @@ def getInfo(html,regexs, allowRepeat = False):
 
     return allowRepeat and infos or list(set(infos))
 
+def delHtmlTag(content):
+    content = replaceStr(content, '<script(.|\n)*?</script>')
+    content = replaceStr(content, '<style(.|\n)*?</style>')
+    content = replaceStr(content, '<(.|\n)*?>')
+    content = replaceStr(content, '-->')
+    content = replaceStr(content, '&.*?;')
+    content = replaceStr(content, '\s')
+
+    return content
+
 ##################################################
 """
     匹配相关函数

@@ -41,11 +41,7 @@ def parseUrl(urlInfo):
     content = tools.getInfo(html, regexs)
     content = content and content[0] or ''
 
-    content = tools.replaceStr(content, '<script(.|\n)*?</script>')
-    content = tools.replaceStr(content, '<(.|\n)*?>')
-    content = tools.replaceStr(content, '-->')
-    content = tools.replaceStr(content, '&.*?;')
-    content = tools.replaceStr(content, '\s')
+    content = tools.delHtmlTag(content)
 
     log.debug("---------- article ----------\ntitle = %s\ncontent = %s"%(title, content))
 

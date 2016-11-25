@@ -5,4 +5,5 @@ __all__ = [
     "sina",
     "cctv",
     "people",
+    "wangyi",
  ]
