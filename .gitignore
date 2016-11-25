@@ -1,4 +1,6 @@
 */__pycache__
 *.pyc
 .svn/
-*.log
+log/*
+TextMessage
+

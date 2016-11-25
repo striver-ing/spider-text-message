@@ -1,28 +1,6 @@
-内连接 ifeng.com
+<h1>特朗普会改变美国“亚太再平衡战略”吗？</h1>
 
-标题 <h1 itemprop="headline" id="artical_topic">冯小刚公开发文炮轰万达 称故意给《潘金莲》低排片</h1>
-
-内容：<div id="main_content"...>  ...   </div>
-
-<meta name="og:time" content="2016年11月18日 08:51" />
-<span itemprop="datePublished" class="ss01">
-2016年11月18日 08:51
-</span
-
-作者：<span itemprop="name">马晓宁</span>
-
-
---------------------------------------------------------------------------
-
-    <h1 itemprop="headline" id="artical_topic">[京沪网络女主播调查]约会洗剪吹男屌丝 被骗走2万</h1>
-
-     <span itemprop="datePublished" class="ss01">2016-04-25 18:13:44</span>
-
-     <div id="main_content"> ..</div>
-
-
-<h1>....</h1>
-
- <div class="yc_con_l">
-。。。
-</div>
+<div class="box_pic"></div> ... <div class="box_pic"></div>
+<div class="content clear clearfix"> ...<div class="edit clearfix">
+<div class="show_text"> ... <div class="edit">
+        

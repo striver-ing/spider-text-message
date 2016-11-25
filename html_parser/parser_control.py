@@ -50,3 +50,6 @@ class  PaserControl(threading.Thread):
             pass
         elif domain == Constance.CCTV:
             cctv.parseUrl(urlInfo)
+
+        elif domain == Constance.PEOPLE:
+            people.parseUrl(urlInfo)

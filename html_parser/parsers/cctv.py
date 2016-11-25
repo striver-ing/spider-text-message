@@ -16,8 +16,17 @@ def parseUrl(urlInfo):
 
     html = tools.getHtml(sourceUrl)
     if html == None:
-        basePaser.updateUrl(sourceUrl, Constance.TODO)
+        basePaser.updateUrl(sourceUrl, Constance.EXECPTION)
         return
+
+    # 取当前页面的全部url
+    urls = tools.getUrls(html)
+
+    # 过滤掉外链接 添加到数据库
+    fitUrl = tools.fitUrl(urls, "cctv.com")
+    for url in fitUrl:
+        # log.debug('url = ' + url)
+        basePaser.addUrl(url, websiteId, depth + 1)
 
 
     # 取当前页的文章信息
@@ -46,23 +55,10 @@ def parseUrl(urlInfo):
     if chineseWord and content and title:
         basePaser.addTextInfo(websiteId, sourceUrl, title, content)
 
-    # 當前頁是中文， 則把當前頁的子url添加到數據庫
-    if chineseWord:
-        # 取当前页面的全部url
-        urls = tools.getUrls(html)
-
-        # 过滤掉外链接 添加到数据库
-        fitUrl = tools.fitUrl(urls, "cctv.com")
-        for url in fitUrl:
-            # log.debug('url = ' + url)
-            basePaser.addUrl(url, websiteId, depth + 1)
-    else:
-        log.debug('当前页非中文 或 无章信息 %s'%sourceUrl)
-
     # 更新sourceUrl为done
     basePaser.updateUrl(sourceUrl, Constance.DONE)
 
-# url = 'http://espanol.cctv.com/2016/11/22/ARTI1FKaPF91p4VIp1jerGBx161122.shtml'
+# url = 'http://www.cctv.com/'
 # haha = {'url': url, 'website_id': '582ea577350b654b67dc8ac8', 'depth': 1, 'description': ''}
 # parseUrl(haha)
 

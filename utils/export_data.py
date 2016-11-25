@@ -13,8 +13,10 @@ from utils.log import log
 MONGO_HOST = 'localhost'
 MONGO_PORT = 27017
 
-FILE_PATH    = 'D:\\TextMessage\\'
-# WEBSITE = "酷六"
+PROJECT_NAME = 'spider-text-message'
+CURRENT_PATH = os.path.abspath('.')
+PROJEC_TPATH = CURRENT_PATH[:CURRENT_PATH.find(PROJECT_NAME) + len(PROJECT_NAME)]
+FILE_PATH = PROJEC_TPATH + '\\TextMessage\\'
 
 class MongoDB():
     def __init__(self, db = '', host = MONGO_HOST, port = MONGO_PORT):
@@ -52,6 +54,8 @@ def getDomain(url):
         return domain
 
 def export():
+    log.info('*'*40)
+    log.info('正在导出数据...')
     dataCount = 0
 
     mongoDB = MongoDB()
@@ -68,7 +72,7 @@ def export():
             url = data['url']
             website = list(db.website.find({'_id':data['website_id']}))[0]['web_name']
 
-            fileName = getDomain(url) + ".txt"
+            fileName = getDomain(url) + ".xml"
             fileName = FILE_PATH + website + "\\" + fileName
 
             # 创建文件夹
@@ -79,14 +83,14 @@ def export():
             file = open(fileName, 'a',  encoding='utf8')
 
             # 写文件
-            print('正在导出 %s --> %s'%(data['title'], fileName))
+            # print('正在导出 %s --> %s'%(data['title'], fileName))
             value = (data['title'], data['release_time'], data['charset'], data['author'], data['url'], data['keyword'], data['content'])
             text = \
 '''
 <text>
 <title>%s</title>
 <foundtime>%s</foundtime>
-<charset>%s</charse>
+<charset>%s</charset>
 <author>%s</author>
 <Url>%s</Url>
 <keyword>%s</keyword>
@@ -99,8 +103,7 @@ def export():
             file.close()
 
     mongoDB.close()
-    print('*'*40)
-    print('已导出数据到 %s  共%d条'%(FILE_PATH, dataCount))
+    log.info('已导出数据到 %s  共%d条'%(FILE_PATH, dataCount))
     # pause
 
 if __name__ == '__main__':
