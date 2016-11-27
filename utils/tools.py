@@ -11,6 +11,8 @@ from urllib.parse import quote
 from utils.log import log
 from tld import get_tld
 from urllib import request
+# from selenium import webdriver
+import requests
 
 def getHtml(url, code = 'utf-8'):
     html = None
@@ -18,6 +20,29 @@ def getHtml(url, code = 'utf-8'):
         page = request.urlopen(quote(url,safe='/:?=&'), timeout = 3)
         html = page.read().decode(code,'ignore')
         page.close()
+
+    except Exception as e:
+        log.error(e)
+    return html
+
+# def getHtmlByWebDirver(url):
+#     html = None
+#     try:
+#         driver = webdriver.PhantomJS(executable_path = 'D:/software/phantomjs-2.1.1-windows/phantomjs-2.1.1-windows/bin/phantomjs')
+#         driver.get(url)
+#         # time.sleep(10)
+#         html = driver.page_source
+#         driver.close()
+#     except Exception as e:
+#         log.error(e)
+#     return html
+
+def getHtmlByGet(url):
+    html = None
+    try:
+        r = requests.get(url)
+        r.encoding = 'utf-8'
+        html = r.text
 
     except Exception as e:
         log.error(e)
@@ -50,12 +75,17 @@ def getInfo(html,regexs, allowRepeat = False):
 def delHtmlTag(content):
     content = replaceStr(content, '<script(.|\n)*?</script>')
     content = replaceStr(content, '<style(.|\n)*?</style>')
+    content = replaceStr(content, '<!--(.|\n)*?-->')
     content = replaceStr(content, '<(.|\n)*?>')
-    content = replaceStr(content, '-->')
     content = replaceStr(content, '&.*?;')
     content = replaceStr(content, '\s')
 
     return content
+
+def isHaveChinese(content):
+    regex = '[\u4e00-\u9fa5]+'
+    chineseWord = getInfo(content, regex)
+    return chineseWord and True or False
 
 ##################################################
 """

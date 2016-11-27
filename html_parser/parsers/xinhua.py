@@ -20,7 +20,7 @@ def parseUrl(urlInfo):
     html = tools.getHtml(sourceUrl)
     if not DEBUG:
         if html == None:
-            basePaser.updateUrl(sourceUrl, Constance.EXECPTION)
+            basePaser.updateUrl(sourceUrl, Constance.EXCEPTION)
             return
 
         # 取当前页面的全部url

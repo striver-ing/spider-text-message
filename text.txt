@@ -1,8 +1,4 @@
-xinhua
-
-<h1 id="title">
-新华国际时评：中国梦走向世界的豪迈与担当
-</h1>
-
-<div id="content">(.*?)<div class="clear"></div>
-<div id="videoArea"> .. <!--文章操作-->
+id="artibody".*?>(.*?)<!-- 吸顶导航结束定位标记 -->
+id="artibody".*?>(.*?)<div id="left_hzh_ad">
+<!-- 正文内容 begin -->...<!-- 正文内容 end -->
+id="articleContent".*?>..<div class="spacer"></div>

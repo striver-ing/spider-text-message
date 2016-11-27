@@ -4,7 +4,7 @@
 TODO           = 0
 DOING          = 1
 DONE           = 2
-EXECPTION      = 3
+EXCEPTION      = 3
 
 # 网站
 IFENG   = "ifeng.com"        #凤凰
