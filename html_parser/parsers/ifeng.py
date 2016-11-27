@@ -43,7 +43,7 @@ def parseUrl(urlInfo):
 
     content = tools.delHtmlTag(content)
 
-    log.debug("---------- article ----------\ntitle = %s\ncontent = %s"%(title, content))
+    log.debug("---------- article ----------\nurl = %s\ntitle = %s\ncontent = %s"%(sourceUrl, title, content))
 
     if content:
         basePaser.addTextInfo(websiteId, sourceUrl, title, content)

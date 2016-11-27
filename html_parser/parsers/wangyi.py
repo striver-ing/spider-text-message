@@ -48,7 +48,7 @@ def parseUrl(urlInfo):
     content = content and content[0] or ''
     content = tools.delHtmlTag(content)
 
-    log.debug("---------- article ----------\ntitle = %s\ncontent = %s"%(title, content))
+    log.debug("---------- article ----------\nurl = %s\ntitle = %s\ncontent = %s"%(sourceUrl, title, content))
 
     if not DEBUG:
         # 判断中英文

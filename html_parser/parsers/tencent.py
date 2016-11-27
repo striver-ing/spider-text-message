@@ -1,93 +1,13 @@
-# encoding=utf-8
+# encoding=utf8
 import sys
-sys.path.append("..\..")
-#sys.setdefaultencoding('utf-8')
+sys.path.append("../..")
 
-import re
-import requests
-import fileinput
-import utils.tools as tools
 import html_parser.base_paser as basePaser
 from html_parser.base_paser import *
 
-def parseUrl(urlInfo):
-    log.debug('处理 %s'%urlInfo)
+DEBUG = False
 
-    url = urlInfo['url']
-    depth = urlInfo['depth']
-    websiteId = urlInfo['website_id']
-    description = urlInfo['description']
-
-    try:
-        response = requests.get(url, timeout=5)
-    except Exception as e:
-        log.error(e)
-        basePaser.updateUrl(url, Constance.DONE)
-    else:
-        if response.status_code < 300:
-            log.debug("解析页面开始...")
-            html = response.text
-            urls = tools.getInfo(html, 'href="(.+?)"')
-            urls = tools.filterDomain(urls, 'qq.com')
-
-            # 过滤部分视频
-            urls = tools.filterRule(urls, lineList)
-            urls = tools.filterHttp(urls)
-            # 获取url信息开始
-            log.debug("url=%s"%url)
-
-            # 获取title
-            reg = '<title>(.*?)</title>'
-            title = ''.join(tools.getInfo(html, reg))
-            log.debug("取到标题：%s"%title)
-
-            # 获取正文区域
-            reg = 'bossZone="content">(.+?)正文已结束.+?</span>'
-            mainArticle = tools.getInfo(html, reg);
-
-            # 获取正文
-            reg = '<P.*?>(.*?)</P>'
-            content = ''.join(re.findall(reg,str(mainArticle),re.S))
-
-            regex = ['<script.+</script>','<style.+</style>','<div.+</div>','<!--.*?-->','\\|\\\\|r|n','\\\\','u3000','<.+?>']
-            for reg in regex:
-                content = tools.replaceStr(content, reg)
-            content = content.strip()
-            log.debug("取到正文：%s"%content)
-
-            # 获取编码
-            reg = '<meta charset="(.*?)">'
-            charset = ''.join(tools.getInfo(html, reg))
-            log.debug("取到编码：%s"%charset)
-
-            # 获取发布时间
-            reg = '"a_time">(.*?)</'
-            releaseTime = ''.join(tools.getInfo(html, reg))
-            log.debug("取到发布时间：%s"%releaseTime)
-
-            # 获取作者
-            reg = '责任编辑：(.*?)</'
-            author = ''.join(tools.getInfo(html, reg))
-            log.debug("取到作者：%s"%author)
-
-            # 获取keyword
-            reg = '<meta name="keywords" content="(.*?)">'
-            keyword = ''.join(tools.getInfo(html, reg))
-            log.debug("取到关键字：%s"%keyword)
-
-            # 存数据库
-            if (title != '' and content != ''):
-                basePaser.addTextInfo(websiteId, url, title, content, author, releaseTime, charset, keyword)
-
-            for url in urls:
-                log.debug("保存url到DB: %s"%url)
-                basePaser.addUrl(url, websiteId, depth + 1, '')
-
-            basePaser.updateUrl(url, Constance.DONE)
-        else:
-            basePaser.updateUrl(url, Constance.DONE)
-
-
+# not use url
 lineList = [
 'service.qq.com',
 'pvp.qq.com',
@@ -151,42 +71,68 @@ lineList = [
 '.exe'
 ]
 
+#外部传进url
+def parseUrl(urlInfo):
+    log.debug('处理 %s'%urlInfo)
 
-"""
-html =  requests.get('http://sports.qq.com/a/20161122/003622.htm#p=1').text
-#urls = tools.filterDomain(urls, 'qq.com')
+    sourceUrl = urlInfo['url']
+    depth = urlInfo['depth']
+    websiteId = urlInfo['website_id']
+    description = urlInfo['description']
 
-reg = 'bossZone="content">(.+?)正文已结束.+?</span>'
-mainArticle = tools.getInfo(html, reg);
-reg = '<P.*?>(.*?)</P>'
-content = ''.join(re.findall(reg,str(mainArticle),re.S))
-content = tools.replaceStr(content, '<script.+</script>')
-content = tools.replaceStr(content, '<style.+</style>')
-content = tools.replaceStr(content, '<div.+</div>')
-content = tools.replaceStr(content, '<!--.*?-->')
-content = tools.replaceStr(content, '\\|\\\\|r|n')
-content = tools.replaceStr(content, '\\\\')
-content = tools.replaceStr(content, 'u3000')
-content = content.strip()
-content = tools.replaceStr(content, '<.+?>')
-print(content)
+    # 使用urlopen网页有时乱码 用get请求 然后设置编码解决了问题
+    html = tools.getHtmlByGet(sourceUrl, '')
+
+    if not DEBUG:
+        if html == None:
+            if sourceUrl == Constance.TENCENT:
+                basePaser.updateUrl(sourceUrl, Constance.TODO)
+            else:
+                basePaser.updateUrl(sourceUrl, Constance.EXCEPTION)
+            return
+
+        # 取当前页面的全部url
+        urls = tools.getUrls(html)
+
+        # 过滤掉外链接 添加到数据库
+        fitUrl = tools.fitUrl(urls, "qq.com")
+        fitUrl = tools.filterRule(fitUrl, lineList)
+        for url in fitUrl:
+            # log.debug('url = ' + url)
+            basePaser.addUrl(url, websiteId, depth + 1)
 
 
+    # 取当前页的文章信息
+    # 标题
+    regexs = '<h1.*?>(.*?)</h1>'
+    title = tools.getInfo(html, regexs)
+    title = title and title[0] or ''
+    title = tools.delHtmlTag(title)
+    # 内容
+    regexs = ['bossZone="content">(.+?)正文已结束.+?</span>',
+              'id="articleContent">(.*?)<div class="hasc">'
+             ]
 
-url = 'http://www.qq.com'
-response = requests.get(url, timeout=5)
+    content = tools.getInfo(html, regexs)
+    content = content and content[0] or ''
+    content = tools.delHtmlTag(content)
 
+    log.debug("---------- article ----------\nurl = %s\ntitle = %s\ncontent = %s"%(sourceUrl, title, content))
 
-urls = []
-lineList = []
-for line in fileinput.input('../../filterRule.txt'):
-urls.append('news.com')
-urls.append('http://qq.com')
-urls = tools.filterRule(urls, 'qq')
+    if not DEBUG:
+        # 判断中英文
+        regex = '[\u4e00-\u9fa5]+'
+        chineseWord = tools.getInfo(content, regex)
 
-for i in lineList:
-    print(i)
+        if chineseWord and content and title:
+            basePaser.addTextInfo(websiteId, sourceUrl, title, content)
 
-for url in urls:
-    print(url)
-"""
+        # 更新sourceUrl为done
+        basePaser.updateUrl(sourceUrl, Constance.DONE)
+
+if __name__ == '__main__':
+    print('main')
+    DEBUG = True
+    url = 'http://news.qq.com/a/20161127/005993.htm'
+    haha = {'url': url, 'website_id': '582ea577350b654b67dc8ac8', 'depth': 1, 'description': ''}
+    parseUrl(haha)

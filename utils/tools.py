@@ -17,7 +17,7 @@ import requests
 def getHtml(url, code = 'utf-8'):
     html = None
     try:
-        page = request.urlopen(quote(url,safe='/:?=&'), timeout = 3)
+        page = request.urlopen(quote(url,safe='/:?=&'), timeout = 5)
         html = page.read().decode(code,'ignore')
         page.close()
 
@@ -37,11 +37,12 @@ def getHtml(url, code = 'utf-8'):
 #         log.error(e)
 #     return html
 
-def getHtmlByGet(url):
+def getHtmlByGet(url, code = 'utf-8'):
     html = None
     try:
-        r = requests.get(url)
-        r.encoding = 'utf-8'
+        r = requests.get(url, timeout = 5)
+        if code:
+            r.encoding = code
         html = r.text
 
     except Exception as e:
@@ -101,7 +102,6 @@ def filterDomain(urls, domain):
     ---------
     @result: 返回一个过滤后新的列表
     '''
-    log.debug("解析域名....")
     urls = isinstance(urls, str) and [urls] or urls
 
     def _Rule(url):
@@ -123,7 +123,6 @@ def filterRule(urls, rules):
     ---------
     @result: 返回一个过滤后新的列表
     '''
-    log.debug("过滤匹配...")
     urls = isinstance(urls, str) and [urls] or urls
     rules = isinstance(rules, str) and [rules] or rules
 
