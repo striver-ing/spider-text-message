@@ -39,14 +39,14 @@ class AddRootUrl(threading.Thread):
 
     # 注册添加url的方法
     def registUrlFunc(self):
-       AddRootUrl._addUrlFuncs.append([self.addIFengUrl, Constance.IFENG])
-       AddRootUrl._addUrlFuncs.append([self.addSoHuUrl, Constance.SOHU])
-       AddRootUrl._addUrlFuncs.append([self.addTencentUrl, Constance.TENCENT])
-       AddRootUrl._addUrlFuncs.append([self.addSinaUrl, Constance.SINA])
-       AddRootUrl._addUrlFuncs.append([self.addCCTVUrl, Constance.CCTV])
-       AddRootUrl._addUrlFuncs.append([self.addPeopleUrl, Constance.PEOPLE])
-       AddRootUrl._addUrlFuncs.append([self.addWangYiUrl, Constance.WANG_YI])
-       AddRootUrl._addUrlFuncs.append([self.addXinHuaUrl, Constance.XIN_HUA])
+        AddRootUrl._addUrlFuncs.append([self.addIFengUrl, Constance.IFENG])
+        AddRootUrl._addUrlFuncs.append([self.addSoHuUrl, Constance.SOHU])
+        AddRootUrl._addUrlFuncs.append([self.addTencentUrl, Constance.TENCENT])
+        AddRootUrl._addUrlFuncs.append([self.addSinaUrl, Constance.SINA])
+        AddRootUrl._addUrlFuncs.append([self.addCCTVUrl, Constance.CCTV])
+        AddRootUrl._addUrlFuncs.append([self.addPeopleUrl, Constance.PEOPLE])
+        AddRootUrl._addUrlFuncs.append([self.addWangYiUrl, Constance.WANG_YI])
+        AddRootUrl._addUrlFuncs.append([self.addXinHuaUrl, Constance.XIN_HUA])
 
     # 添加凤凰url
     def addIFengUrl(self):
