@@ -9,10 +9,14 @@ from base.root_url import AddRootUrl
 from html_parser.parser_control import PaserControl
 
 def init():
-    pass
+    db = tools.getConnectedDB()
+    # 设唯一索引
+    db.urls.ensure_index('url', unique=True)
+    db.text_info.ensure_index('url', unique = True)
 
 if __name__ == '__main__':
     log.info("--------begin--------")
+    init()
 
     addRootUrl = AddRootUrl()
     addRootUrl.start()

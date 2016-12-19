@@ -31,11 +31,11 @@ class AddRootUrl(threading.Thread):
                 addWebUrl()
 
     def addUrl(self, url, websiteId, description = '', depth = 0, status = Constance.TODO):
-        for i in db.urls.find({'url':url}):
-            return
-
-        urlDict = {'url':url, 'description':description, 'website_id':websiteId, 'depth':depth, 'status':Constance.TODO}
-        db.urls.save(urlDict)
+        try:
+            urlDict = {'url':url, 'description':description, 'website_id':websiteId, 'depth':depth, 'status':Constance.TODO}
+            db.urls.save(urlDict)
+        except Exception as e:
+            pass
 
     # 注册添加url的方法
     def registUrlFunc(self):

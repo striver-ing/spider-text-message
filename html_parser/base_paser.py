@@ -36,11 +36,13 @@ def getRegex(websiteId, regTypeId):
 
 ##################################################
 def addUrl(url, websiteId, depth, description = '', status = Constance.TODO):
-    for i in db.urls.find({'url':url}):
-        return
+    try:
+        urlDict = {'url':url, 'website_id':websiteId, 'depth':depth, 'description':description, 'status':status}
+        db.urls.save(urlDict)
+    except Exception as e:
+        # log.debug('已存在 url ' + url)
+        pass
 
-    urlDict = {'url':url, 'website_id':websiteId, 'depth':depth, 'description':description, 'status':status}
-    db.urls.save(urlDict)
 
 def updateUrl(url, status):
     db.urls.update({'url':url}, {'$set':{'status':status}}, multi=True)
@@ -72,26 +74,29 @@ def addTextInfo(websiteId, url, title, content, author = '', releaseTime = '', c
         'keyword':keyword
         }
 
-    # 查找数据库，根据url和websiteid看是否有相同的纪录，若有，则比较纪录信息，将信息更全的纪录更新到数据库中
-    for doc in db.text_info.find({'website_id':websiteId, 'url':url}, {'_id':0}):
-        isDiffent = False
-        warning = '\n' + '-' * 50 + '\n'
-        for key, value in doc.items():
-            if len(str(doc[key])) < len(str(textInfoDict[key])):
-                isDiffent = True
-                warning = warning + '更新 old %s: %s\n     new %s: %s\n'%(key, doc[key], key, textInfoDict[key])
-                doc[key] = textInfoDict[key]
+    # # 查找数据库，根据url和websiteid看是否有相同的纪录，若有，则比较纪录信息，将信息更全的纪录更新到数据库中
+    # for doc in db.text_info.find({'website_id':websiteId, 'url':url}, {'_id':0}):
+    #     isDiffent = False
+    #     warning = '\n' + '-' * 50 + '\n'
+    #     for key, value in doc.items():
+    #         if len(str(doc[key])) < len(str(textInfoDict[key])):
+    #             isDiffent = True
+    #             warning = warning + '更新 old %s: %s\n     new %s: %s\n'%(key, doc[key], key, textInfoDict[key])
+    #             doc[key] = textInfoDict[key]
 
-            else:
-                warning = warning + '留守 old %s: %s\n     new %s: %s\n'%(key, doc[key], key, textInfoDict[key])
+    #         else:
+    #             warning = warning + '留守 old %s: %s\n     new %s: %s\n'%(key, doc[key], key, textInfoDict[key])
 
-        if isDiffent:
-            warning = '已存在：\n' + warning + '-' * 50
-            log.warning(warning)
+    #     if isDiffent:
+    #         warning = '已存在：\n' + warning + '-' * 50
+    #         log.warning(warning)
 
-            db.text_info.update({'website_id':websiteId, 'url':url}, {'$set':doc})
-        else:
-            log.warning('已存在url:  ' + url)
-        return
+    #         db.text_info.update({'website_id':websiteId, 'url':url}, {'$set':doc})
+    #     else:
+    #         log.warning('已存在url:  ' + url)
+    #     return
 
-    db.text_info.save(textInfoDict)
+    try:
+        db.text_info.save(textInfoDict)
+    except Exception as e:
+        log.debug('已存在 textInfoDict ' + str(textInfoDict))

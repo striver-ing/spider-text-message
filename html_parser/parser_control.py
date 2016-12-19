@@ -37,7 +37,10 @@ class  PaserControl(threading.Thread):
     def parseUrl(self, urlInfo):
         website_id = urlInfo['website_id']
 
-        domain = list(db.website.find({'_id':website_id}))[0]['domain']
+        try:
+            domain = list(db.website.find({'_id':website_id}))[0]['domain']
+        except Exception as e:
+            log.debug('不存在 ' + str(urlInfo))
         if domain == Constance.IFENG:
             ifeng.parseUrl(urlInfo)
 
