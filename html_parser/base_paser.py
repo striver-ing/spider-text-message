@@ -71,7 +71,8 @@ def addTextInfo(websiteId, url, title, content, author = '', releaseTime = '', c
         'author':author,
         'release_time':releaseTime,
         'charset':charset,
-        'keyword':keyword
+        'keyword':keyword,
+        'read_status':0
         }
 
     # # 查找数据库，根据url和websiteid看是否有相同的纪录，若有，则比较纪录信息，将信息更全的纪录更新到数据库中
