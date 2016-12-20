@@ -33,6 +33,7 @@ def parseUrl(urlInfo):
     regexs = '<h1.*?>(.*?)</h1>'
     title = tools.getInfo(html, regexs)
     title = title and title[0] or ''
+    title = tools.delHtmlTag(title)
     # 内容
     regexs = ['<div class="content clear clearfix".*?>(.*?)</div>',
               '<div class="box_con".*?>(.*?)<div class="edit clearfix"',
@@ -43,10 +44,14 @@ def parseUrl(urlInfo):
 
     content = tools.getInfo(html, regexs)
     content = content and content[0] or ''
-
     content = tools.delHtmlTag(content)
 
-    log.debug("---------- article ----------\nurl = %s\ntitle = %s\ncontent = %s"%(sourceUrl, title, content))
+    log.debug('''
+                sourceUrl = %s
+                title     = %s
+                content   =  %s
+             '''%(sourceUrl, title, content))
+
     if content:
         basePaser.addTextInfo(websiteId, sourceUrl, title, content)
 

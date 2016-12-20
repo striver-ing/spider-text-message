@@ -19,6 +19,13 @@ def parseUrl(urlInfo):
         basePaser.updateUrl(sourceUrl, Constance.EXCEPTION)
         return
 
+    # 判断中英文
+    regex = '[\u4e00-\u9fa5]+'
+    chineseWord = tools.getInfo(html, regex)
+    if not chineseWord:
+        basePaser.updateUrl(sourceUrl, Constance.DONE)
+        return
+
     # 取当前页面的全部url
     urls = tools.getUrls(html)
 
@@ -33,6 +40,7 @@ def parseUrl(urlInfo):
     regexs = '<h1.*?>(.*?)</h1>'
     title = tools.getInfo(html, regexs)
     title = title and title[0] or ''
+    title = tools.delHtmlTag(title)
     # 内容
     regexs = ['<div id="main_content".*?>(.*?)</div>',
               '<div class="yc_con_l">(.*?)<div class="txt_share_box"',
@@ -43,7 +51,11 @@ def parseUrl(urlInfo):
 
     content = tools.delHtmlTag(content)
 
-    log.debug("---------- article ----------\nurl = %s\ntitle = %s\ncontent = %s"%(sourceUrl, title, content))
+    log.debug('''
+                sourceUrl = %s
+                title     = %s
+                content   =  %s
+             '''%(sourceUrl, title, content))
 
     if content:
         basePaser.addTextInfo(websiteId, sourceUrl, title, content)
