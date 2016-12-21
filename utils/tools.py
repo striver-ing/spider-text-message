@@ -42,7 +42,7 @@ def getHtml(url, code = 'utf-8'):
             log.error(e)
         finally:
             page and page.close()
-    return html
+    return html if len(html) < 1024 * 1024 else None  # 不是网页的不要
 
 # def getHtmlByWebDirver(url):
 #     html = None
@@ -61,22 +61,16 @@ def getHtmlByGet(url, code = 'utf-8'):
     if not url.endswith('.exe') and not url.endswith('.EXE'):
         r = None
         try:
-            log.debug("get response begin")
             r = requests.get(url, timeout = TIME_OUT)
-            log.debug("get response end")
-
             if code:
                 r.encoding = code
-            log.debug("r.text begin")
             html = r.text
-            log.debug("r.text end")
 
         except Exception as e:
             log.error(e)
         finally:
             r and r.close()
-    log.debug('getHtmlByGet end')
-    return html
+    return html if len(html) < 1024 * 1024 else None
 
 def getUrls(html):
     urls = re.compile('<a.*?href="(https?.*?)"').findall(str(html))
@@ -95,7 +89,7 @@ def getInfo(html,regexs, allowRepeat = False):
     regexs = isinstance(regexs, str) and [regexs] or regexs
 
     for regex in regexs:
-        infos = re.findall(regex,str(html),re.S)
+        infos = re.findall(regex,str(html),re.S) #不是网页可能会卡死 比如apk
         # infos = re.compile(regexs).findall(str(html))
         if len(infos) > 0:
             break

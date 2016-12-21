@@ -42,13 +42,19 @@ def parseUrl(urlInfo):
             # log.debug('url = ' + url)
             basePaser.addUrl(url, websiteId, depth + 1)
 
-
     # 取当前页的文章信息
     # 标题
     regexs = '<h1.*?>(.*?)</h1>'
     title = tools.getInfo(html, regexs)
     title = title and title[0] or ''
     title = tools.delHtmlTag(title)
+
+    if title == '加载中...':
+        # 更新sourceUrl为done
+        basePaser.updateUrl(sourceUrl, Constance.TODO)
+        return
+
+
     # 内容
     regexs = ['id="artibody".*?>(.*?)<!-- 吸顶导航结束定位标记 -->',
               'id="artibody".*?>(.*?)<div id="left_hzh_ad">',
