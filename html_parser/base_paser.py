@@ -46,6 +46,7 @@ def addUrl(url, websiteId, depth, description = '', status = Constance.TODO):
 
 def updateUrl(url, status):
     db.urls.update({'url':url}, {'$set':{'status':status}}, multi=True)
+    log.debug('update url status = %d url = %s'%(status, url))
 
 def addTextInfo(websiteId, url, title, content, author = '', releaseTime = '', charset = '', keyword = ''):
     '''

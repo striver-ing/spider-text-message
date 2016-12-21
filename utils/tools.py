@@ -17,9 +17,10 @@ import requests
 def getHtml(url, code = 'utf-8'):
     html = None
     try:
-        page = request.urlopen(quote(url,safe='/:?=&'), timeout = 5)
-        html = page.read().decode(code,'ignore')
-        page.close()
+        if not url.endswith('.exe'):
+            page = request.urlopen(quote(url,safe='/:?=&'), timeout = 3)
+            html = page.read().decode(code,'ignore')
+            page.close()
 
     except Exception as e:
         log.error(e)
@@ -40,10 +41,11 @@ def getHtml(url, code = 'utf-8'):
 def getHtmlByGet(url, code = 'utf-8'):
     html = None
     try:
-        r = requests.get(url, timeout = 5)
-        if code:
-            r.encoding = code
-        html = r.text
+        if not url.endswith('.exe'):
+            r = requests.get(url, timeout = 3)
+            if code:
+                r.encoding = code
+            html = r.text
 
     except Exception as e:
         log.error(e)

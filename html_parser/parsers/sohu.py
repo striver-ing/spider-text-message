@@ -47,10 +47,11 @@ def parseUrl(urlInfo):
     content = tools.delHtmlTag(content)
 
     log.debug('''
+                depth     = %d
                 sourceUrl = %s
                 title     = %s
                 content   =  %s
-             '''%(sourceUrl, title, content))
+             '''%(depth, sourceUrl, title, content))
 
     if content:
         basePaser.addTextInfo(websiteId, sourceUrl, title, content)

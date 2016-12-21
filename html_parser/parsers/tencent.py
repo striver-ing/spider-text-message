@@ -124,10 +124,11 @@ def parseUrl(urlInfo):
     content = tools.delHtmlTag(content)
 
     log.debug('''
+                depth     = %d
                 sourceUrl = %s
                 title     = %s
                 content   =  %s
-             '''%(sourceUrl, title, content))
+             '''%(depth, sourceUrl, title, content))
 
     if not DEBUG:
         if content and title:

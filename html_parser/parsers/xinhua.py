@@ -47,6 +47,7 @@ def parseUrl(urlInfo):
     title = tools.delHtmlTag(title)
     # 内容
     regexs = ['<div id="content">(.*?)<div class="clear"></div>',
+              '<div class="article">(.*?)<!--文章操作-->',
               '<div id="videoArea">(.*?)<!--文章操作-->',
               '<div class="content">(.*?)<div id="articleEdit">'
              ]
@@ -56,10 +57,11 @@ def parseUrl(urlInfo):
     content = tools.delHtmlTag(content)
 
     log.debug('''
+                depth     = %d
                 sourceUrl = %s
                 title     = %s
                 content   =  %s
-             '''%(sourceUrl, title, content))
+             '''%(depth, sourceUrl, title, content))
 
     if not DEBUG:
         if content and title:
@@ -70,6 +72,6 @@ def parseUrl(urlInfo):
 
 if __name__ == '__main__':
     DEBUG = True
-    url = 'http://www.jl.xinhuanet.com/2012jlpd/2016-11/25/c_1119990033.htm'
+    url = 'http://news.xinhuanet.com/newmedia/2015-08/04/c_134478273.htm'
     haha = {'url': url, 'website_id': '582ea577350b654b67dc8ac8', 'depth': 1, 'description': ''}
     parseUrl(haha)
