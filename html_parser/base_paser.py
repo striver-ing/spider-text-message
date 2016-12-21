@@ -35,6 +35,7 @@ def getRegex(websiteId, regTypeId):
     return regexs
 
 ##################################################
+# @tools.log_function_time
 def addUrl(url, websiteId, depth, description = '', status = Constance.TODO):
     try:
         urlDict = {'url':url, 'website_id':websiteId, 'depth':depth, 'description':description, 'status':status}
@@ -43,11 +44,12 @@ def addUrl(url, websiteId, depth, description = '', status = Constance.TODO):
         # log.debug('已存在 url ' + url)
         pass
 
-
+@tools.log_function_time
 def updateUrl(url, status):
     db.urls.update({'url':url}, {'$set':{'status':status}}, multi=True)
     log.debug('update url status = %d url = %s'%(status, url))
 
+@tools.log_function_time
 def addTextInfo(websiteId, url, title, content, author = '', releaseTime = '', charset = '', keyword = ''):
     '''
     @summary: 添加文章信息

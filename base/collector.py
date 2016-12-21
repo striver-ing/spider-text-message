@@ -56,8 +56,10 @@ class Collector(threading.Thread, Singleton):
     def stop(self):
         Collector._threadStop = True
 
+    @tools.log_function_time
     def __inputData(self):
         if len(Collector._urls) > int(tools.getConfValue("collector", "max_size")):
+            log.debug("collector 已满 size = %d"%len(Collector._urls))
             return
         mylock.acquire() #加锁
 

@@ -76,6 +76,6 @@ def parseUrl(urlInfo):
 if __name__ == '__main__':
     print('main')
     DEBUG = True
-    url = 'http://mil.news.sina.com.cn/china/2016-11-27/doc-ifxyawmm3526735.shtml'
+    url = 'http://dldir3.qq.com/minigamefile/QQGame_setup_web_11.EXE'
     haha = {'url': url, 'website_id': '582ea577350b654b67dc8ac8', 'depth': 1, 'description': ''}
     parseUrl(haha)

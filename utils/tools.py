@@ -13,17 +13,35 @@ from tld import get_tld
 from urllib import request
 # from selenium import webdriver
 import requests
+import time
+from threading import Timer
+import functools
+import datetime
+import socket
+socket.setdefaulttimeout(3.0)
+
+TIME_OUT = 30
+TIMER_TIME = 5
 
 def getHtml(url, code = 'utf-8'):
     html = None
-    try:
-        if not url.endswith('.exe'):
-            page = request.urlopen(quote(url,safe='/:?=&'), timeout = 3)
-            html = page.read().decode(code,'ignore')
-            page.close()
+    if not url.endswith('.exe') and not url.endswith('.EXE'):
+        page = None
+        try:
+            def timeout_handler(response):
+                response.close()
 
-    except Exception as e:
-        log.error(e)
+            page = request.urlopen(quote(url,safe='/:?=&'), timeout = TIME_OUT)
+            # 设置定时器 防止在read时卡死
+            t = Timer(TIMER_TIME, timeout_handler, [page])
+            t.start()
+            html = page.read().decode(code,'ignore')
+            t.cancel()
+
+        except Exception as e:
+            log.error(e)
+        finally:
+            page and page.close()
     return html
 
 # def getHtmlByWebDirver(url):
@@ -40,15 +58,24 @@ def getHtml(url, code = 'utf-8'):
 
 def getHtmlByGet(url, code = 'utf-8'):
     html = None
-    try:
-        if not url.endswith('.exe'):
-            r = requests.get(url, timeout = 3)
+    if not url.endswith('.exe') and not url.endswith('.EXE'):
+        r = None
+        try:
+            log.debug("get response begin")
+            r = requests.get(url, timeout = TIME_OUT)
+            log.debug("get response end")
+
             if code:
                 r.encoding = code
+            log.debug("r.text begin")
             html = r.text
+            log.debug("r.text end")
 
-    except Exception as e:
-        log.error(e)
+        except Exception as e:
+            log.error(e)
+        finally:
+            r and r.close()
+    log.debug('getHtmlByGet end')
     return html
 
 def getUrls(html):
@@ -229,3 +256,18 @@ def getWebsiteId(domain):
         log.warning('website表中无%s信息，需先手动添加'%domain)
 
     return websiteId
+
+################################################
+
+def log_function_time(func):
+    try:
+        @functools.wraps(func)  #将函数的原来属性付给新函数
+        def calculate_time(*args, **kw):
+            began_time = time.time()
+            func(*args, **kw)
+            end_time = time.time()
+            log.info(func.__name__ + " run time  = " + str(end_time - began_time))
+        return calculate_time
+    except:
+        log.info('求取时间无效 因为函数参数不符')
+        return func

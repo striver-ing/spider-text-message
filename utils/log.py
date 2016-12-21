@@ -32,6 +32,8 @@ formatter = logging.Formatter(LOG_FORMAT)
 Rthandler.setFormatter(formatter)
 logging.getLogger('').addHandler(Rthandler)
 
+logging.getLogger("requests").setLevel(logging.WARNING)
+
 log = logging
 
 #日志级别大小关系为：critical > error > warning > info > debug
