@@ -24,8 +24,8 @@ logging.basicConfig(level=logging.DEBUG,
 # 现在 xxx.log xxx1.log xxx2.log  如果backupCount 是2位数时  则 01  02  03 三位数 001 002 .. 文件由近及远
 class RotatingFileHandler(BaseRotatingHandler):
     def __init__(self, filename, mode='a', maxBytes=0, backupCount=0, encoding=None, delay=0):
-        if maxBytes > 0:
-           mode = 'a'
+        # if maxBytes > 0:
+        #    mode = 'a'
         BaseRotatingHandler.__init__(self, filename, mode, encoding, delay)
         self.maxBytes = maxBytes
         self.backupCount = backupCount
