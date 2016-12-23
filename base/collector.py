@@ -18,6 +18,7 @@ import utils.tools as tools
 from utils.log import log
 import utils.export_data as exportData
 import os
+import time
 
 mylock = threading.RLock()
 
@@ -40,7 +41,10 @@ class Collector(threading.Thread, Singleton):
     _interval = int(tools.getConfValue("collector", "sleep_time"))
 
     #初始时将正在做的任务至为未做
+    beginTime = time.time()
     _db.urls.update({'status':Constance.DOING}, {'$set':{'status':Constance.TODO}}, multi=True)
+    endTime = time.time()
+    log.debug('update url time' + str(endTime - beginTime) )
 
     if DEBUG:
         log.debug("is debug depth = %s"%DEPTH)
@@ -66,6 +70,9 @@ class Collector(threading.Thread, Singleton):
         website = tools.getConfValue("collector", "website")
         depth = int(tools.getConfValue("collector", "depth"))
         urlCount = int(tools.getConfValue("collector", "url_count"))
+
+        beginTime = time.time()
+
         if DEBUG:
             urlsList = Collector._db.urls.find({"status":Constance.TODO, "depth":DEPTH},{"url":1, "_id":0,"depth":1, "description":1, "website_id":1}).sort([("depth",1)]).limit(urlCount)
         elif website == 'all':
@@ -74,11 +81,22 @@ class Collector(threading.Thread, Singleton):
             websiteId = tools.getWebsiteId(website)
             urlsList = Collector._db.urls.find({"status":Constance.TODO, "website_id":websiteId, "depth":{"$lte":depth}},{"url":1, "_id":0,"depth":1, "description":1, "website_id":1}).sort([("depth",1)]).limit(urlCount)
 
+        endTime = time.time()
+
         urlsList = list(urlsList)
+
+        log.debug('get url time ' + str(endTime - beginTime) + " size " + str(len(urlsList) ))
+
+        beginTime = time.time()
         Collector._urls.extend(urlsList)
+        log.debug('put get url time ' + str( time.time() - beginTime)  + " size " +  str(len(urlsList)) )
+
         #更新已取到的url状态为doing
+        beginTime = time.time()
         for url in urlsList:
             Collector._db.urls.update(url, {'$set':{'status':Constance.DOING}})
+        endTime = time.time()
+        log.debug('update url time ' + str(endTime - beginTime) )
 
         if self.isAllHaveDone():
             self.stop()
@@ -99,7 +117,7 @@ class Collector(threading.Thread, Singleton):
             Collector._nullTimes = 0
             return False
 
-
+    @tools.log_function_time
     def getUrls(self, count):
         mylock.acquire() #加锁
 

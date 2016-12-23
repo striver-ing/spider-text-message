@@ -23,6 +23,23 @@ socket.setdefaulttimeout(3.0)
 TIME_OUT = 30
 TIMER_TIME = 5
 
+def log_function_time(func):
+    try:
+        @functools.wraps(func)  #将函数的原来属性付给新函数
+        def calculate_time(*args, **kw):
+            began_time = time.time()
+            callfunc = func(*args, **kw)
+            end_time = time.time()
+            log.info(func.__name__ + " run time  = " + str(end_time - began_time))
+            return callfunc
+        return calculate_time
+    except:
+        log.info('求取时间无效 因为函数参数不符')
+        return func
+
+#######################################################
+
+@log_function_time
 def getHtml(url, code = 'utf-8'):
     html = None
     if not url.endswith('.exe') and not url.endswith('.EXE'):
@@ -56,6 +73,7 @@ def getHtml(url, code = 'utf-8'):
 #         log.error(e)
 #     return html
 
+@log_function_time
 def getHtmlByGet(url, code = 'utf-8'):
     html = None
     if not url.endswith('.exe') and not url.endswith('.EXE'):
@@ -252,16 +270,3 @@ def getWebsiteId(domain):
     return websiteId
 
 ################################################
-
-def log_function_time(func):
-    try:
-        @functools.wraps(func)  #将函数的原来属性付给新函数
-        def calculate_time(*args, **kw):
-            began_time = time.time()
-            func(*args, **kw)
-            end_time = time.time()
-            log.info(func.__name__ + " run time  = " + str(end_time - began_time))
-        return calculate_time
-    except:
-        log.info('求取时间无效 因为函数参数不符')
-        return func

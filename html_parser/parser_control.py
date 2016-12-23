@@ -34,6 +34,7 @@ class  PaserControl(threading.Thread):
 
                 time.sleep(self._interval)
             except Exception as e:
+                log.debug(urls)
                 log.debug(e)
 
     def parseUrl(self, urlInfo):
@@ -50,9 +51,10 @@ class  PaserControl(threading.Thread):
 
             elif domain == Constance.TENCENT:
                 tencent.parseUrl(urlInfo)
-            elif domain == Constance.SINA:
-                sina.parseUrl(urlInfo)
 
+            elif domain == Constance.SINA:
+                #sina.parseUrl(urlInfo)
+                pass
             elif domain == Constance.CCTV:
                 cctv.parseUrl(urlInfo)
 
