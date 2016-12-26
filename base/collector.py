@@ -68,8 +68,10 @@ class Collector(threading.Thread, Singleton):
 
     @tools.log_function_time
     def __inputData(self):
+        log.debug('buffer size %d'%self.getMaxReadSize())
+        log.debug('buffer can write size = %d'%self.getMaxWriteSize())
         if self.getMaxWriteSize() == 0:
-            log.debug("collector 已满 size = %d"%len(Collector._urls))
+            log.debug("collector 已满 size = %d"%self.getMaxReadSize())
             return
 
         beginTime = time.time()
