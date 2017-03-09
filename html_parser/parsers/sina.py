@@ -72,7 +72,6 @@ def parseUrl(urlInfo):
                 title     = %s
                 content   =  %s
              '''%(depth, sourceUrl, title, content))
-    print(html)
     if not DEBUG:
         if content and title:
             basePaser.addTextInfo(websiteId, sourceUrl, title, content)
@@ -83,6 +82,6 @@ def parseUrl(urlInfo):
 if __name__ == '__main__':
     print('main')
     DEBUG = True
-    url = 'http://sina.com.cn/m/xiaojunsong'
+    url = 'http://dldir3.qq.com/minigamefile/QQGame_setup_web_11.EXE'
     haha = {'url': url, 'website_id': '582ea577350b654b67dc8ac8', 'depth': 1, 'description': ''}
     parseUrl(haha)
